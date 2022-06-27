@@ -14,18 +14,24 @@ def mat_reshape(data):
 
 
 def drawforDTW(data_one, data_two, v=0, not_dtw_dis=True, new=False, aver=True, if_save=False, save_p='.', dpi=100):
-
     data_one = mat_reshape(data_one)
     data_two = mat_reshape(data_two)
 
     if new == True:
         final = dtw.dtw(data_one, data_two, dist_method=mydistance)
     else:
-        final = dtw.dtw(data_one, data_two)  # dist_method=euclidean  default
+        final = dtw.dtw(data_one, data_two, step_pattern=dtw.symmetric2)  # dist_method=euclidean  default
+
+    # new=False not_dtw_dis=1 aver=True
+    # new=True not_dtw_dis=0 aver=False distance->normalizedDistance
+    # new=False not_dtw_dis=0 aver=False distance->normalizedDistance x
+    # new=False not_dtw_dis=1 aver=True pattern=s1 x
 
     if not not_dtw_dis:
         if aver == False:
-            print(final.distance)
+            fin_dis = final.normalizedDistance
+            # fin_dis = final.distance
+            # print(fin_dis)
         else:
             fin_dis = final.distance / len(final.index1)
         plt.plot(final.index1, final.index2)
@@ -35,11 +41,12 @@ def drawforDTW(data_one, data_two, v=0, not_dtw_dis=True, new=False, aver=True, 
         for i in range(0, len(final.index1)):
             # nd = int(len(final.index1)/100*i)
             dist += euclidean(data_one[final.index1[i]], data_two[final.index2[i]])
-        
+
         if aver == False:
+            fin_dis = dist
             print(dist)
         else:
-            fin_dis = dist / len(final.index1)  # same lenth as index2
+            fin_dis = dist / len(final.index1)  # same length as index2
         plt.plot(final.index1, final.index2)
 
     if v:
@@ -49,7 +56,6 @@ def drawforDTW(data_one, data_two, v=0, not_dtw_dis=True, new=False, aver=True, 
 
     plt.close()
     return fin_dis
-
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser("DTW calculate")

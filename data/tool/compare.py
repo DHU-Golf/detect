@@ -8,7 +8,7 @@ import tqdm
 import data.tool.hit as hit
 import data.tool.mat_rotate as mat_rotate
 from data.golfdb.events import events
-from data.tool.prepare_data import PATH_ex
+from data.tool.prepare_data import PATH_ex, scale_data
 
 
 def Load_DATA(point_path_a, point_path_b, verbose=0, if_hit=1, hit_method=0):
@@ -24,10 +24,7 @@ def Load_DATA(point_path_a, point_path_b, verbose=0, if_hit=1, hit_method=0):
         data_one = data_one[one_hit[0]:one_hit[1]]
         data_two = data_two[two_hit[0]:two_hit[1]]
 
-    h_rate = data_one[0][0][2] / data_two[0][0][2]
-    data_two = data_two * h_rate
-    if verbose:
-        print(str(h_rate))
+    data_one, data_two = scale_data(data_one, data_two)
 
     best_ang = mat_rotate.best_angle(data_one[0], data_two[0]) / 10
     if verbose:
